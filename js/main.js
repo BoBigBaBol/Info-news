@@ -1,0 +1,29 @@
+/*用户点击不同的导航，跳转到不同的页面*/
+$(function(){
+    $('.nav-wrap ul').on({
+        click:function(){
+            $(this).css('color','#00c1de');
+            if($(this).text()=="首页"){
+                // 注意相对的是引入的文件的路径
+                $('.content-center').load('pages/home.html');
+                $(this).siblings().css('color','');
+                return;
+            }
+            if($(this).text()=="栏目管理"){
+                $('.content-center').load('pages/category.html');
+                $(this).siblings().css('color','');
+                return;
+            }
+            if($(this).text()=="资讯管理"){
+                $('.content-center').load('pages/info.html');
+                $(this).siblings().css('color','');
+                return;
+            }
+            if($(this).text()=="用户管理"){
+                $('.content-center').load('pages/user.html');
+                $(this).siblings().css('color','');
+                return;
+            }
+        }
+    },'li');
+})

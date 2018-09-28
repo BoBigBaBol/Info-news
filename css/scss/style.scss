@@ -1,0 +1,328 @@
+html,body,ul,li,p{
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+// 定义一般样式
+$color:#fff;
+$line-height:38px;
+$text-align:center;
+// 去除默认样式
+a,a:focus,a:hover{text-decoration: none;color: $color}
+// 左边菜单栏默认样式
+$nav-top-color:#3d556d;
+$nav-left-color:#282830;
+$nav-top-height:40px;
+$border-color:rgb(51,51,51);
+.container-fluid{ padding:0;}
+// 左边菜单栏
+nav {
+    color: $color;
+    text-align: $text-align;
+    width: 200px;
+    float: left;
+    .nav-top{
+        background-color: $nav-top-color;
+        height:$nav-top-height;
+        line-height: $nav-top-height;
+        position: relative;
+        img{
+            padding-right: 10px;
+            margin-left: -30px;
+        }
+    }
+    .nav-left{
+        background-color: $nav-left-color;
+        height: 735px;
+        ul{
+            padding-top: 40px;
+            text-align: left;
+            li{
+                border-bottom: 1px solid $border-color;
+                padding: 5px 0 5px 20px;
+                margin-bottom: 10px;
+                cursor: pointer;
+            }
+            li span{
+                margin-left:10px;
+            }
+            li i:last-child{
+                float: right;
+                margin-right: 25px;
+            }
+        }
+    }
+}
+
+// 中间内容区
+$content-color:#eee;
+.content{
+    background-color: $content-color;
+    .content-top{
+        line-height: $line-height;
+        background-color: $color;
+        height: 40px;
+        .info{float: left;}
+        .info span{
+            font-size: 18px;
+            margin-top: 10px;
+            color: #666;
+        }
+        .info span:first-child{
+            margin-left: 15px;
+        }
+        .info span:nth-child(2){
+            margin-left: 40px;
+        }
+        .user{
+            float: right;
+            line-height: $line-height;
+            margin-right: 80px;
+            font-size: 0;
+            img{
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background-color: #ccc;
+                margin-right: 10px;
+            }
+            span:nth-child(2),span:nth-child(3){
+                line-height: $line-height;
+                vertical-align: middle;
+                font-size: 12px;
+            }
+        }
+    }
+    .content-center{
+        background-color: $content-color;
+        height: 720px;
+        margin:15px 10px 0 210px;
+        overflow-y: auto;
+
+    }
+    .home-wrap{
+        overflow-y: auto;
+        .row{margin:0;}
+        .data-first{
+            height:80px;
+            padding:15px;
+            background:$color;
+            overflow:hidden;
+            border-radius:5px;
+            .iconDiv,.numDiv{
+                float:left;
+            }
+        }
+        .iconDiv{
+                width:50px;
+                height:50px;
+                line-height:50px;
+                border-radius:50%;
+                background:#66bb0d;
+                color:$color;
+                font-weight:700;
+            }
+        .numDiv {
+            margin-left:20px;
+            padding-top:5px;
+            small{
+                display:block;
+                color:#a2a3a1;
+            }
+            span{
+                font-size:24px;
+                line-height:1;
+            }
+        }
+        .iconfont{font-size:30px;}    
+        .data-second{
+            #visContent{
+                height:270px;
+                background:$color;
+            }
+            .visDiv{
+                position: relative;
+            }
+            .numDiv{
+                position: absolute;
+                z-index:1;
+                top:20px;left:10px;
+                span {
+                    font-size:20px;
+                    font-weight:700;
+                    color:#66bb0f;
+                 }
+                small {font-size:12px;}
+            }
+        }
+        .data-three:first-child{
+            #updateContent{
+                height:125px;
+                background:$color;
+            }
+            .upDiv{
+                position: relative;
+            }
+            .numDiv{
+                position: absolute;
+                z-index:1;
+                top:5px;left:2px;
+                span {
+                    font-size:16px;
+                    font-weight:700;
+                    color:#862eb7;
+                 }
+                small {font-size:10px;}
+            }
+        }
+        .data-three:last-child{
+            #salesContent{
+                height:125px;
+                background:$color;
+            }
+            .salesDiv{
+                position: relative;
+            }
+            .numDiv{
+                position: absolute;
+                z-index:1;
+                top:5px;left:2px;
+                span {
+                    font-size:16px;
+                    font-weight:700;
+                    color:#66bb0d;
+                 }
+                small {font-size:10px;}
+            }
+        }
+        .data-three #updateContent{
+            margin-bottom:20px;
+            height:125px;
+        }
+        .data-first,.data-second,.data-three{
+            margin-bottom:15px;
+        }
+        .data-four{
+            #userContent{
+                height:360px;
+                background:$color;
+            }
+            
+        }
+        .data-five:first-child{
+            #speedContent{
+                height:215px;
+                background:$color;
+                margin-bottom:15px;
+            }
+            .speedDiv{
+                position: relative;
+            }
+            .numDiv{
+                position: absolute;
+                z-index:1;
+                top:5px;left:2px;
+                span {
+                    font-size:24px;
+                    font-weight:700;
+                    color:#7e2ec0;
+                 }
+                small {font-size:12px;}
+            }
+        }  
+           
+        }
+        .data-five:last-child{
+            #IEcontent{
+                height:135px;
+                background:$color;
+            }
+        }
+    .column-wrap{
+        background-color: #fff;
+        border-radius: 5px;
+        font-size: 12px;
+        padding-bottom: 20px;
+        overflow-y: auto;
+        button{font-size: 12px;}
+        button:first-child{ margin: 10px;}
+        table{
+            margin-left: 10px;
+            width: 98%;
+            td{
+                height: 24px;
+                line-height: 24px;     
+               }
+            tr td:first-child{width:10%;}
+            tr td:nth-child(2){width:20%;}
+            tr td:nth-child(3){width:20%;}
+            tr td:nth-child(4){width:40%;}            
+            tr td:nth-child(5){width:10%;
+            span:first-child {padding-right: 10px;}}            
+        }
+    }
+    .news-wrap{
+        background-color: #fff;
+        border-radius: 5px;
+        padding-bottom: 20px;
+        font-size: 12px;
+        overflow-y: auto;
+        button{font-size: 12px;}
+        button:first-child{
+            margin: 10px;
+        }
+        table{
+            margin-left: 10px;
+            width: 98%;
+            td{
+                height: 24px;
+                line-height: 24px;     
+               }
+            tr td:first-child{width:10%;}
+            tr td:nth-child(2){width:20%;}
+            tr td:nth-child(3){width:10%;}
+            tr td:nth-child(4){width:10%;}            
+            tr td:nth-child(5){width:10%;}            
+            tr td:nth-child(6){width:20%;}            
+            tr td:nth-child(7){width:10%;}            
+            tr td:nth-child(8){width:10%;}            
+        }
+    }
+    .user-wrap{
+        background-color: #fff;
+        border-radius: 5px;
+        font-size: 12px;
+        color: #666;
+        overflow-y: auto;
+        button{
+            font-size: 12px;
+            margin: 10px;
+        }
+        li{
+            width: 225px;
+            border: 1px solid rgb(237,237,237);
+            display: inline-block;
+            vertical-align: middle;
+            box-shadow: 0px 0px 5px rgba(204, 204, 204, .4);
+            margin: 10px;
+            padding-bottom: 10px;
+            img{
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                background-color: #ccc;
+                margin: 10px 0;
+                text-align: center;
+            }
+            table{
+                margin:0 20px;
+                font-size: 12px;
+                td{
+                    padding: 4px 0;
+                }
+                td:first-child{width: 50%;}
+            }
+        }
+    }
+}

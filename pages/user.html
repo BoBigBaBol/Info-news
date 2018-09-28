@@ -1,0 +1,232 @@
+<div class="user-wrap">
+    <button class="btn btn-success addBtn">新增</button>
+    <ul class="list-unstyled text-center clearfix addc">
+    </ul>
+
+</div>
+<!-- 模态框 -->
+<div class="modal" id="userModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <div class="backDiv">
+                    <i class="iconfont icon-zuo"></i>
+                    <span>返回</span>
+                </div>
+                <div class="modal-title">
+                    添加用户
+                </div>
+            </div>
+            <div class="modal-body">
+                <form class="form">
+                    <div class="form-group">
+                        <label for="">用户名</label>
+                        <input type="text" name="username" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="">密码</label>
+                        <input type="password" name="password" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="">确认密码</label>
+                        <input type="password" name="password1" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="">真实姓名</label>
+                        <input type="text" name="nickname" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="">邮箱</label>
+                        <input type="email" name="email" class="form-control" />
+                    </div>
+                    <div class="form-group hide">
+                        <button type="reset">重置</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- 提示信息 -->
+                <span class="messageSpan"></span>
+                <button class="btn btn-success btn-sm saveBtn">提 交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 弹出框 -->
+<div class="alertDiv">
+    <div class="alert alert-success">
+        <strong>提示：</strong>
+        <span>执行成功</span>
+    </div>
+</div>
+<style>
+.modal{
+    background: rgba(0, 0, 0, .4);
+}
+.modal-dialog {
+    width: 300px;
+    margin-top: 0;
+    margin-right: 0;
+    font-size: 12px;
+}
+.backDiv{
+    position: absolute;
+    cursor: pointer;
+}
+.backDiv i{font-size: 12px;}
+.messageSpan{
+    color: red;
+}
+.alertDiv{
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+}
+</style>
+<script>
+$(function(){
+    // 设置模态框的高度
+    $('.modal-content').height($(window).height());
+    $('button[type=reset]').trigger('click');
+    // 打开模态框
+    $('.addBtn').click(function(){
+        // 清除提示信息
+        $('.messageSpan').html('');        
+        $('#userModal').show();
+
+    });
+    // 关闭模态框
+    $('.backDiv').click(function(){
+        $('#userModal').hide();
+    });
+    // 提交按钮，保存数据，或者给用户提示为什么没通过验证
+    $('.saveBtn').click(function(){
+        var username = $('input[name=username]').val();
+        var password = $('input[name=password]').val();
+        var password1 = $('input[name=password1]').val();
+        var nickname = $('input[name=nickname]').val();
+        var email = $('input[name=email]').val();
+        var userface = $('input[name=img]').val();
+        var message = "";
+        if(username&&password&&password1&&nickname&&email){
+            if(password==password1){
+                // 保存
+                var obj = {
+                    username:username,
+                    password:password,
+                    nickname:nickname,
+                    email:email,
+                    userface:userface,
+                };
+                $.post(baseURL+'/manager/user/saveOrUpdateUser',obj,function(res){
+                    console.log(res,'保存成功');
+                    // 刷新页面，关闭模态框，提示用户执行成功
+                    loadData();
+                    $('.add').hide();
+                    $('.alertDiv').addClass('animated slideInRight');
+                    $('.alertDiv').show();
+                    setTimeout(function(){
+                        $('.alertDiv').fadeOut();
+                    },2000);
+                });
+            }else{
+                message = "两次密码不一致";
+            }
+        }else{
+            message = "请输入完整的信息";
+        }
+        $('.messageSpan').html(message);
+    });
+
+    $(".user-wrap").on({
+        'switchChange.bootstrapSwitch':function (event,state) {
+                // 点击修改之后，向后台传递参数
+                var id = $(this).closest('.switch').prev('input').val();
+                //封装成对象给后台，属性名是由后台接口决定，属性值是由前端采集的数据
+                var obj = {
+                    id:id,
+                    status:state
+                };
+                $.post(baseURL+'/manager/user/changeStatus',obj,function(res){
+                    console.log(res,'执行成功')
+                });
+            }
+    },'[type=checkbox]');
+
+    //获取数据
+    loadData();
+    function loadData(){
+        //清空数据
+        $('.addc').empty();
+        $.get(baseURL+'/manager/user/findAllUser',function(res){
+            res.data.forEach(function(item,index){
+                // 创建缩略图
+                var $thm = $(
+                    `<li>
+                        <img src="`+(item.userface?item.userface:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1514093920321&di=913e88c23f382933ef430024afd9128a&imgtype=0&src=http%3A%2F%2Fp.3761.com%2Fpic%2F9771429316733.jpg')+`" alt="" />
+                        <table class="text-left">
+                            <tr>
+                                <td>用户名</td>
+                                <td>`+(item.username?item.username:'-')+`</td>
+                            </tr>
+                            <tr>
+                                <td>真实姓名</td>
+                                <td>`+(item.nickname?item.nickname:'-')+`</td>
+                            </tr>
+                            <tr>
+                                <td>注册时间</td>
+                                <td>`+(item.regTime?item.regTime:'-')+`</td>
+                            </tr>
+                            <tr>
+                                <td>email</td>
+                                <td>`+(item.email?item.email:'-')+`</td>
+                            </tr>
+                            <tr>
+                                <td>状态</td>
+                                <td>
+                                    <input type="hidden" value="`+(item.id)+`">
+                                    <div class="switch switch-mini data-on="success" data-off="danger"">
+                                        <input type="checkbox"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>`
+                );
+                $('.addc').append($thm);
+                $('.user-wrap input[type=checkbox]:last').bootstrapSwitch('state',item.enabled);
+            });
+        });
+    };
+
+
+});
+</script>
+
+<!-- $('.status').on('click','span',function(){
+    if($(this).html()=='关闭'){
+        $(this).css({
+            'paddingLeft':0,
+            'marginLeft':-6
+        });
+        $(this).html('开启');
+        $(this).parent().css('background','#5cb85c');
+        $(this).prev().animate({
+            'marginLeft':36
+        },300);
+    }
+    else if($(this).html()=='开启'){
+        $(this).css({
+            'marginLeft':0,
+            'paddingLeft':12
+        });
+        $(this).html('关闭');
+        $(this).parent().css('background','');
+        $(this).prev().animate({
+            'marginLeft':0
+        },300);
+    }
+})
+}) -->

@@ -1,0 +1,141 @@
+<div class="news-wrap">
+        <button class="btn btn-success">新增</button>
+        <button class="btn btn-success">批量删除</button>
+        <table class="table table-bordered text-center">
+            <tbody>
+                <tr>
+                    <td>编号</td>
+                    <td>文章标题</td>
+                    <td>所属栏目</td>
+                    <td>背景音乐</td>
+                    <td>作者</td>
+                    <td>发布时间</td>
+                    <td>阅读次数</td>
+                    <td>操作</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+</div>
+
+<div class="add">
+    <div class="mask"></div>
+    <div class="adduser">
+        <div class="add-title text-center">
+            <div class="back">
+                <i class="iconfont icon-zuo"></i>
+                <span>返回</span>
+            </div>
+            <span>发布资讯</span>
+        </div>
+        <form>
+            <div class="form-group">
+                <label for="titleName">标题</label>
+                <input type="text" class="form-control" id="titleName">
+            </div>
+            <div class="form-group">
+                <label>所属栏目</label>
+                <select class="form-control">
+                    <option value="">是我</option>
+                    <option value="">是我</option>
+                    <option value="">是我</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tbStyle">列表样式</label>
+                <input type="text" class="form-control" id="tbStyle">
+            </div>
+            <div class="form-group">
+                <label for="inputFile">列表缩略图</label>
+                <input type="file" id="inputFile">
+            </div>
+            <div class="form-group">
+                <label for="article">正文</label>
+                <textarea class="form-control" rows="6" name=textarea id="article"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">发布</button>
+        </form>
+    </div>
+</div>
+<style>
+    .add{
+        display: none;
+    }
+    .mask{
+        position: absolute;
+        width: 200px;
+        top: 0;left: 0;
+        background: rgba(0,0,0,.4);
+    }
+    .adduser{
+        position: absolute;
+        right: 0;top: 0;
+        z-index: 1;
+        background: #fff;
+        color: #666;
+        font-size: 12px;
+    }
+    .add-title{
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 1px solid #eee;
+    }
+    .back{
+        position: absolute;
+        z-index: 2;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    .back i{
+        font-size: 12px;
+    }
+    form{
+        padding: 20px 15px;
+    }
+    form button {
+        float: right;
+    }
+</style>
+<script>
+    $(function(){
+        $('.mask').height($('.content').height());
+        $('.adduser').height($('.content').height());
+        $('.adduser').width($('.content').width()-200);
+        $('.news-wrap button:contains(新增)').bind('click',function(){
+            $('.add').fadeIn(200);
+        })
+        $('.back').bind('click',function(){
+            $('.add').fadeOut(200);
+        });
+
+    })
+</script>
