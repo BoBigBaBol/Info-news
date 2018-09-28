@@ -1,23 +1,19 @@
 <div class="column-wrap">
     <button class="btn btn-success addBtn">新增</button>
-    <button class="btn btn-success">批量删除</button>
+    <button class="btn btn-success batchDelBtn">批量删除</button>
     <table class="table table-bordered text-center">
-        <tbody class="update">
-            <tr>
-                <td>编号</td>
-                <td>栏目名称</td>
-                <td>父栏目</td>
-                <td>备注</td>
-                <td>操作</td>
-            </tr>
-            
-
-        </tbody>
+        <tr>
+            <td>编号</td>
+            <td>栏目名称</td>
+            <td>父栏目</td>
+            <td>备注</td>
+            <td>操作</td>
+        </tr>
     </table>
 </div>
 
 <!-- 模态框 -->
-<div class="modal" id="userModal">
+<div class="modal" id="categoryModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
@@ -30,22 +26,21 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="">序号</label>
-                        <input type="text" class="form-control" name="no">
-                    </div>
-                    <div class="form-group">
                         <label for="">栏目名称</label>
-                        <input type="text" class="form-control" name="name">
+                        <input type="text" class="form-control" name="categoryName">
                     </div>
                     <div class="form-group">
-                        <label>父栏目</label>
-                        <select class="form-control opt">
-        
+                        <label for="">父栏目</label>
+                        <select class="form-control" name="categoryParent">
+                            <option value="">请选择</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="">备注</label>
-                        <input type="text" class="form-control" name="comment">
+                        <label for="">描述</label>
+                        <textarea name="categoryComment" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="form-group hide">
+                        <button type="reset">重置</button>
                     </div>
                 </form>
             </div>
@@ -57,13 +52,7 @@
         </div>
     </div>
 </div>
-<!-- 提示框 -->
-<div class="alertDiv">
-    <div class="alert alert-success">
-        <strong>提示：</strong>
-        <span>执行成功</span>
-    </div>
-</div>
+
 <style>
 .modal{
     background: rgba(0, 0, 0, .4);
@@ -82,88 +71,172 @@
 .messageSpan{
     color: red;
 }
-.alertDiv{
-    display: none;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 300px;
+table span{
+    cursor: pointer;
 }
 </style>
+
 <script>
 $(function(){
+    // 所有的栏目
+    var categories = [];
+    var option ="新增";
+
+    // 当前正在修改的对象的id
+    var currentId = '';
+    /*
+        后台中关于新增和修改的区别在于有没有传id，传id就是修改，不传就是保存
+        点击提交按钮的时候判断是新增还是修改，从而决定是否携带id给后台
+        点击新增的提交的时候，不传id
+        点击修改的提交的时候，传id
+    */
+
+
+
     // 设置模态框的高度
     $('.modal-content').height($(window).height());
-    $('button[type=reset]').trigger('click');
-    // 清除提示信息
-    $('.messageSpan').html(' ');
-    // 打开模态框
+    // 新增
     $('.addBtn').click(function(){
-        $('#userModal').show();
+        option = "新增";
+        // 清除提示信息
+        $('button[type=reset]').trigger('click');
+        $('.messageSpan').html('');
+        // 调用模态框
+        addOption();
     });
     // 关闭模态框
     $('.backDiv').click(function(){
-        $('#userModal').hide();
+        $('#categoryModal').hide();
     });
-    
+
+    // 保存
     $('.saveBtn').click(function(){
-    var name = $('input[name=name]').val();
-    var comment = $('input[name=comment]').val();
-    var no = $('input[name=no]').val();
-    var parentId = $('option:checked').val();
-    if(name&&comment&&no){
-        // 保存
-    var obj = {
-                name:name,
-                comment:comment,
-                no:no,
-                parentId:parentId
-            };
-    $.post(baseURL+'/manager/category/saveOrUpdateCategory',obj,function(res){
-        console.log(res,'保存成功');
-        // 刷新页面，关闭模态框，提示用户执行成功
-        loadData();
-        $('#userModal').hide();
-        $('.alertDiv').addClass('animated slideInRight');
-        $('.alertDiv').show();
-        setTimeout(function(){
-            $('.alertDiv').fadeOut();
-        },2000);
-    });
-    }else{
-        message = '请把该输的输完'
-    }
-    $('.messageSpan').html(message);
-
-});
-
-
-
-
-//获取数据
-loadData();
-function loadData(){
-    $('.opt').empty();
-    $.get(baseURL+'/manager/category/findAllCategory',function(res){
-        res.data.forEach(function(item,index){
-            var $category = $(
-                `<tr>
-                    <td><input type="checkbox" value="`+item.no+`" /></td>
-                    <td>`+item.name+`</td>
-                    <td>`+(item.parent?item.parent.name:'-')+`</td>
-                    <td>`+item.comment+`</td>
-                    <td><span class="glyphicon glyphicon-pencil" title="修改"></span><span class="glyphicon glyphicon-remove" title="删除"></span></td>
-                </tr>`
-            );
-            $('.update').append($category);
-            // 新增里父栏目选项
-            var $opt = $(
-                `<option value="">`+(item.parent?item.parent.name:'-')+`</option>`
-            );
-            $('.opt').append($opt);
+    var categoryName = $('input[name=categoryName]').val();
+    var categoryComment = $('textarea[name=categoryComment]').val();
+    var categoryParent = $('select[name=categoryParent]').val();
+    if(categoryName&&categoryComment){
+        // 封装数据，保存
+        var obj = {
+            name:categoryName,
+            comment:categoryComment,
+            no:'',
+            parentId:categoryParent
+        };
+        if(option == '修改'){
+            obj.id = currentId;
+        }
+        $.post(baseURL+'/manager/category/saveOrUpdateCategory',obj,function(res){
+            console.log(res,'保存或更新成功');
+            // 刷新页面，关闭模态框，提示用户执行成功
+            alert('保存或更新成功');
+            loadData();
+            $('#categoryModal').hide();
         });
+    }else{
+        $('.messageSpan').html('请输入完整的信息');
+    }
     });
-};
 
+    // 修改
+    $('.column-wrap table').on({
+        click:function(){
+            // 获取当前要修改的id，获取对应对象，给模态框设置值【select比较麻烦，获取所有栏目追加option，设置值】，模态框显示
+            // 清空提示信息
+            option = "修改";
+            $('messageSpan').html('');
+            // 获取当前修改id
+            var id = $(this).closest('tr').find('input[type=checkbox]').val();
+            currentId = id;
+            var cat = categories.filter(function(item){
+                return item.id == id;
+            })[0];
+            // 设置值
+            $('input[name=categoryName]').val(cat.name);
+            $('textarea[name=categoryComment]').val(cat.comment);
+            addOption(function(){
+                $('select[name=categoryParent]').val(cat.parent?cat.parent.id:'');
+            });
+        }
+    },'span[title=修改]');
+
+    // 删除
+    $('.column-wrap table').on({
+        click:function(){
+            // 获取id，传递给后台
+            var id = $(this).closest('tr').find('input[type=checkbox]').val();
+            var obj = {
+                id:id
+            };
+            $.get(baseURL+'/manager/category/deleteCategoryById',obj,function(res){
+                if(res.status == 200){
+                    alert('删除成功');
+                    loadData();
+                }else{
+                    alert('删除失败');
+                    console.log(res.message);
+                }
+            });
+        }
+    },'span[title=删除]')
+
+    // 批量删除
+    $('.batchDelBtn').click(function(){
+        // 获取用户选择的checkbox，获取对应的id数组，转换成字符串传给后台
+        var ids = $('.column-wrap input[type=checkbox]:checked').map(function(index,item){
+            return $(item).val();
+        }).get();
+        var obj = {
+            ids:ids.toString()
+        };
+        $.post(baseURL+'/manager/category/batchDeleteCategory',obj,function(res){
+            if(res.status == 200){
+                alert('批量删除成功');
+                loadData();
+            }else{
+                alert('批量删除失败');
+                console.log(res.message);
+            }
+        })
+    });
+
+    loadData();
+    
+    //追加option，显示模态框
+    function addOption(handle){
+        $('#categoryModal select option:not(:first)').remove();
+        $.get(baseURL+'/manager/category/findAllCategory',function(res){
+            res.data.forEach(function(item){
+                var $option = $('<option value="'+item.id+'">'+item.name+'</option>');
+                $('#categoryModal select').append($option);
+            });
+            if(handle){
+                handle();
+            }
+            $('#categoryModal').show();
+        });
+    }
+			
+    //获取数据
+    function loadData(){
+        // 先删除节点，获取数据，追加节点
+        $('.column-wrap table tr:not(:first)').remove();
+        $.get(baseURL+'/manager/category/findAllCategory',function(res){
+            res.data.forEach(function(item){
+                categories = res.data;
+                var $category = $(
+                    `<tr>
+                        <td><input type="checkbox" value="`+item.id+`" /></td>
+                        <td>`+item.name+`</td>
+                        <td>`+(item.parent?item.parent.name:'-')+`</td>
+                        <td>`+item.comment+`</td>
+                        <td><span class="glyphicon glyphicon-pencil" title="修改"></span>
+                            <span class="glyphicon glyphicon-remove" title="删除"></span>
+                        </td>
+                    </tr>`
+                );
+                $('.column-wrap table').append($category);
+            });
+        });
+    };
 })
 </script>

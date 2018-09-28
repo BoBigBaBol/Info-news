@@ -93,7 +93,8 @@ $(function(){
     // 打开模态框
     $('.addBtn').click(function(){
         // 清除提示信息
-        $('.messageSpan').html('');        
+        $('.messageSpan').html(''); 
+        $('input').val('');
         $('#userModal').show();
 
     });
@@ -124,7 +125,7 @@ $(function(){
                     console.log(res,'保存成功');
                     // 刷新页面，关闭模态框，提示用户执行成功
                     loadData();
-                    $('.add').hide();
+                    $('#userModal').hide();
                     $('.alertDiv').addClass('animated slideInRight');
                     $('.alertDiv').show();
                     setTimeout(function(){
@@ -204,29 +205,3 @@ $(function(){
 
 });
 </script>
-
-<!-- $('.status').on('click','span',function(){
-    if($(this).html()=='关闭'){
-        $(this).css({
-            'paddingLeft':0,
-            'marginLeft':-6
-        });
-        $(this).html('开启');
-        $(this).parent().css('background','#5cb85c');
-        $(this).prev().animate({
-            'marginLeft':36
-        },300);
-    }
-    else if($(this).html()=='开启'){
-        $(this).css({
-            'marginLeft':0,
-            'paddingLeft':12
-        });
-        $(this).html('关闭');
-        $(this).parent().css('background','');
-        $(this).prev().animate({
-            'marginLeft':0
-        },300);
-    }
-})
-}) -->
