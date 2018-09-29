@@ -56,8 +56,20 @@ nav {
 
 // 中间内容区
 $content-color:#eee;
+@mixin base{
+    background-color: #fff;
+    border-radius: 5px;
+    font-size: 12px;
+    padding-bottom: 20px;
+    overflow-y: auto;
+}
+@mixin td_height{
+    height:24px;
+    line-height: 24px;
+}
 .content{
     background-color: $content-color;
+    // 内容区顶部
     .content-top{
         line-height: $line-height;
         background-color: $color;
@@ -94,16 +106,18 @@ $content-color:#eee;
             }
         }
     }
+
+    //内容展示区 
     .content-center{
         background-color: $content-color;
         height: 720px;
         margin:15px 10px 0 210px;
-        overflow-y: auto;
-
     }
-    .home-wrap{
+    // 首页内容
+    #home{
         overflow-y: auto;
         .row{margin:0;}
+        // 第一个动态图表区
         .data-first{
             height:80px;
             padding:15px;
@@ -115,14 +129,14 @@ $content-color:#eee;
             }
         }
         .iconDiv{
-                width:50px;
-                height:50px;
-                line-height:50px;
-                border-radius:50%;
-                background:#66bb0d;
-                color:$color;
-                font-weight:700;
-            }
+            width:50px;
+            height:50px;
+            line-height:50px;
+            border-radius:50%;
+            background:#66bb0d;
+            color:$color;
+            font-weight:700;
+        }
         .numDiv {
             margin-left:20px;
             padding-top:5px;
@@ -136,6 +150,8 @@ $content-color:#eee;
             }
         }
         .iconfont{font-size:30px;}    
+
+        // 第二个动态图表区
         .data-second{
             #visContent{
                 height:270px;
@@ -156,6 +172,8 @@ $content-color:#eee;
                 small {font-size:12px;}
             }
         }
+
+        // 第三个动态图表区
         .data-three:first-child{
             #updateContent{
                 height:125px;
@@ -176,6 +194,8 @@ $content-color:#eee;
                 small {font-size:10px;}
             }
         }
+
+        // 第四个动态图表区
         .data-three:last-child{
             #salesContent{
                 height:125px;
@@ -203,13 +223,16 @@ $content-color:#eee;
         .data-first,.data-second,.data-three{
             margin-bottom:15px;
         }
+
+        // 第五个动态图表区
         .data-four{
             #userContent{
                 height:360px;
                 background:$color;
-            }
-            
+            }   
         }
+
+        // 第六个动态图表区
         .data-five:first-child{
             #speedContent{
                 height:215px;
@@ -231,28 +254,36 @@ $content-color:#eee;
                 small {font-size:12px;}
             }
         }  
-           
-        }
+
+        // 第七个动态图表区
         .data-five:last-child{
             #IEcontent{
                 height:135px;
+                width: 100%;
                 background:$color;
+                #table-sparkline{
+                 margin: 0 auto;
+                 td:first-child{
+                     padding-bottom: 15px;
+                 }   
+                }
             }
         }
-    .column-wrap{
-        background-color: #fff;
-        border-radius: 5px;
-        font-size: 12px;
-        padding-bottom: 20px;
-        overflow-y: auto;
+        }
+
+    //栏目管理内容区 
+    @mixin table {
+        margin-left: 10px;
+        width: 98%;
+    }
+    #category{
+        @include base;
         button{font-size: 12px;}
         button:first-child{ margin: 10px;}
         table{
-            margin-left: 10px;
-            width: 98%;
+            @include table;
             td{
-                height: 24px;
-                line-height: 24px;     
+                @include td_height;   
                }
             tr td:first-child{width:10%;}
             tr td:nth-child(2){width:20%;}
@@ -262,22 +293,18 @@ $content-color:#eee;
             span:first-child {padding-right: 20px;}}            
         }
     }
-    .news-wrap{
-        background-color: #fff;
-        border-radius: 5px;
-        padding-bottom: 20px;
-        font-size: 12px;
-        overflow-y: auto;
+
+    // 资讯管理内容区
+    #info{
+        @include base;       
         button{font-size: 12px;}
         button:first-child{
             margin: 10px;
         }
         table{
-            margin-left: 10px;
-            width: 98%;
+            @include table;
             td{
-                height: 24px;
-                line-height: 24px;     
+                @include td_height; 
                }
             tr td:first-child{width:10%;}
             tr td:nth-child(2){width:20%;}
@@ -286,15 +313,17 @@ $content-color:#eee;
             tr td:nth-child(5){width:10%;}            
             tr td:nth-child(6){width:20%;}            
             tr td:nth-child(7){width:10%;}            
-            tr td:nth-child(8){width:10%;}            
+            tr td:nth-child(8){
+                width:10%;
+                span:first-child {padding-right: 20px;}
+            }            
         }
     }
-    .user-wrap{
-        background-color: #fff;
-        border-radius: 5px;
-        font-size: 12px;
+
+    // 用户管理内容区
+    #user{
+        @include base;       
         color: #666;
-        overflow-y: auto;
         button{
             font-size: 12px;
             margin: 10px;

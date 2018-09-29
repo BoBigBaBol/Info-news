@@ -1,8 +1,7 @@
-<div class="user-wrap">
+<div id="user">
     <button class="btn btn-success addBtn">新增</button>
     <ul class="list-unstyled text-center clearfix addc">
     </ul>
-
 </div>
 <!-- 模态框 -->
 <div class="modal" id="userModal">
@@ -89,12 +88,12 @@
 $(function(){
     // 设置模态框的高度
     $('.modal-content').height($(window).height());
-    $('button[type=reset]').trigger('click');
     // 打开模态框
     $('.addBtn').click(function(){
         // 清除提示信息
         $('.messageSpan').html(''); 
         $('input').val('');
+        $('button[type=reset]').trigger('click');
         $('#userModal').show();
 
     });
@@ -141,20 +140,7 @@ $(function(){
         $('.messageSpan').html(message);
     });
 
-    $(".user-wrap").on({
-        'switchChange.bootstrapSwitch':function (event,state) {
-                // 点击修改之后，向后台传递参数
-                var id = $(this).closest('.switch').prev('input').val();
-                //封装成对象给后台，属性名是由后台接口决定，属性值是由前端采集的数据
-                var obj = {
-                    id:id,
-                    status:state
-                };
-                $.post(baseURL+'/manager/user/changeStatus',obj,function(res){
-                    console.log(res,'执行成功')
-                });
-            }
-    },'[type=checkbox]');
+    
 
     //获取数据
     loadData();
@@ -197,11 +183,24 @@ $(function(){
                     </li>`
                 );
                 $('.addc').append($thm);
-                $('.user-wrap input[type=checkbox]:last').bootstrapSwitch('state',item.enabled);
+                $('#user input[type=checkbox]:last').bootstrapSwitch('state',item.enabled);
             });
         });
     };
-
+    $("#user").on({
+        'switchChange.bootstrapSwitch':function (event,state) {
+                // 点击修改之后，向后台传递参数
+                var id = $(this).closest('.switch').prev('input').val();
+                //封装成对象给后台，属性名是由后台接口决定，属性值是由前端采集的数据
+                var obj = {
+                    id:id,
+                    status:state
+                };
+                $.post(baseURL+'/manager/user/changeStatus',obj,function(res){
+                    console.log(res,'执行成功')
+                });
+            }
+    },'[type=checkbox]');
 
 });
 </script>

@@ -1,4 +1,4 @@
-<div class="home-wrap">
+<div id="home">
 	<div class="row">
 		<div class="top col-sm-3">
 			<div class="data-first">
@@ -84,11 +84,15 @@
 				</div>
 			</div>
 			<div class="data-five">
-				<div class="IEDiv">
 					<div id="IEcontent">
-					
+						<table id="table-sparkline">
+							<tbody id="tbody-sparkline">
+								<tr>
+									<td data-sparkline="71, 78, 39, 66 "></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -99,7 +103,6 @@
 		drawVis();
 		drawUp();
 		drawSales();
-		drawIE();
 		drawSpeed();
 		drawUser();
 		function drawVis() {
@@ -211,62 +214,141 @@
 			}]
 		});
 	}
-		function drawIE(){
-		var chart = Highcharts.chart('IEcontent', {
-			chart: {
-				margin : [0, 0 , 0, 0]
-			},
-			credits:{
-				enabled:false,
-			},
-			title: {
-				text: '',
-				align: 'center',
-				verticalAlign: 'middle',
-				y: 50
-			},
-			tooltip: {
-				headerFormat: '{series.name}<br>',
-				pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
-			},
-			plotOptions: {
-				pie: {
-					dataLabels: {
-						enabled: true,
-						distance: -50,
+
+			Highcharts.SparkLine = function (a, b, c) {
+			var hasRenderToArg = typeof a === 'string' || a.nodeName,
+				options = arguments[hasRenderToArg ? 1 : 0],
+				defaultOptions = {
+					chart: {
+						renderTo: (options.chart && options.chart.renderTo) || this,
+						backgroundColor: null,
+						borderWidth: 0,
+						type: 'area',
+						margin: [40, 0, 0, 0],
+						width: 400,
+						height: 120,
 						style: {
-							fontWeight: 'bold',
-							color: 'white',
-							textShadow: '0px 1px 2px black'
+							overflow: 'visible'
+						},
+						skipClone: true
+					},
+					title: {
+						text: ''
+					},
+					credits: {
+						enabled: false
+					},
+					xAxis: {
+						labels: {
+							enabled: false
+						},
+						title: {
+							text: null
+						},
+						startOnTick: false,
+						endOnTick: false,
+						tickPositions: []
+					},
+					yAxis: {
+						endOnTick: false,
+						startOnTick: false,
+						labels: {
+							enabled: false
+						},
+						title: {
+							text: null
+						},
+						tickPositions: [0]
+					},
+					legend: {
+						enabled: false
+					},
+					tooltip: {
+						backgroundColor: null,
+						borderWidth: 0,
+						shadow: false,
+						useHTML: true,
+						hideDelay: 0,
+						shared: true,
+						padding: 0,
+						positioner: function (w, h, point) {
+							return { x: point.plotX - w / 2, y: point.plotY - h };
 						}
 					},
-					startAngle: -135, // 圆环的开始角度
-					endAngle: 135,    // 圆环的结束角度
-					center: ['50%', '65%']
-				}
-			},
-			series: [{
-				type: 'pie',
-				name: '',
-				innerSize: '50%',
-				data: [
-					['Firefox',   45.0],
-					['IE',       26.8],
-					['Chrome', 12.8],
-					['Safari',    8.5],
-					['Opera',     6.2],
-					{
-						name: '其他',
-						y: 0.7,
-						dataLabels: {
-							// 数据比较少，没有空间显示数据标签，所以将其关闭
-							enabled: false
+					plotOptions: {
+						series: {
+							animation: false,
+							lineWidth: 1,
+							shadow: false,
+							states: {
+								hover: {
+									lineWidth: 1
+								}
+							},
+							marker: {
+								radius: 1,
+								states: {
+									hover: {
+										radius: 2
+									}
+								}
+							},
+							fillOpacity: 0.25
+						},
+						column: {
+							negativeColor: '#910000',
+							borderColor: 'silver'
 						}
 					}
-				]
-			}]
-		});
-	}
+				};
+			options = Highcharts.merge(defaultOptions, options);
+			return hasRenderToArg ?
+				new Highcharts.Chart(a, options, c) :
+			new Highcharts.Chart(options, b);
+		};
+		var start = +new Date(),
+			$tds = $('td[data-sparkline]'),
+			fullLen = $tds.length,
+			n = 0;
+		function doChunk() {
+			var time = +new Date(),
+				i,
+				len = $tds.length,
+				$td,
+				stringdata,
+				arr,
+				data,
+				chart;
+			for (i = 0; i < len; i += 1) {
+				$td = $($tds[i]);
+				stringdata = $td.data('sparkline');
+				arr = stringdata.split('; ');
+				data = $.map(arr[0].split(', '), parseFloat);
+				chart = {};
+				if (arr[1]) {
+					chart.type = arr[1];
+				}
+				$td.highcharts('SparkLine', {
+					series: [{
+						data: data,
+						pointStart: 1
+					}],
+					tooltip: {
+						headerFormat: '<span>' + $td.parent().find('th').html() + ', Q{point.x}:</span><br/>',
+						pointFormat: '<b>{point.y}.000</b> USD'
+					},
+					chart: chart
+				});
+				n += 1;
+				if (new Date() - time > 500) {
+					$tds.splice(0, i + 1);
+					setTimeout(doChunk, 0);
+					break;
+				}
+			}
+			}
+			doChunk();
+
 		function drawSpeed(){
 		var chart = Highcharts.chart('speedContent',{
 			chart: {

@@ -1,109 +1,160 @@
-<div class="news-wrap">
-        <button class="btn btn-success">新增</button>
-        <button class="btn btn-success">批量删除</button>
-        <table class="table table-bordered text-center">
-                <tr>
-                    <td>编号</td>
-                    <td>文章标题</td>
-                    <td>所属栏目</td>
-                    <td>背景音乐</td>
-                    <td>作者</td>
-                    <td>发布时间</td>
-                    <td>阅读次数</td>
-                    <td>操作</td>
-                </tr>
-        </table>
+<div id="info">
+    <button class="btn btn-success addBtn">新增</button>
+    <button class="btn btn-success batchDelBtn">批量删除</button>
+    <table class="table table-bordered text-center">
+        <tr>
+            <td>编号</td>
+            <td>文章标题</td>
+            <td>所属栏目</td>
+            <td>背景音乐</td>
+            <td>作者</td>
+            <td>发布时间</td>
+            <td>阅读次数</td>
+            <td>操作</td>
+        </tr>
+    </table>
 </div>
-
-<div class="add">
-    <div class="mask"></div>
-    <div class="adduser">
-        <div class="add-title text-center">
-            <div class="back">
-                <i class="iconfont icon-zuo"></i>
-                <span>返回</span>
+<!-- 模态框 -->
+<div class="modal" id="infoModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <div class="backDiv">
+                    <i class="iconfont icon-zuo"></i>
+                    <span>返回</span>
+                </div>
+                <div class="modal-title">发布资讯</div>
             </div>
-            <span>发布资讯</span>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="">标题</label>
+                        <input type="text" class="form-control" name="infoName">
+                    </div>
+                    <div class="form-group">
+                        <label for="">所属栏目</label>
+                        <select class="form-control" name="infoParent">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">列表样式</label>
+                        <input type="text" class="form-control" name="infoStyle">
+                    </div>
+                        <label for="">列表缩略图</label>
+                        <input type="file"  name="infoPic">
+                        <div class="fileBtn text-center">点击上传</div>
+                    <div class="form-group">
+                        <label for="">正文</label>
+                        <textarea name="infoComment" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group hide">
+                        <button type="reset">重置</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- 提示信息 -->
+                <span class="messageSpan"></span>
+                <button class="btn btn-success btn-sm saveBtn">发 布</button>
+            </div>
         </div>
-        <form>
-            <div class="form-group">
-                <label for="titleName">标题</label>
-                <input type="text" class="form-control" id="titleName">
-            </div>
-            <div class="form-group">
-                <label>所属栏目</label>
-                <select class="form-control">
-                    <option value="">是我</option>
-                    <option value="">是我</option>
-                    <option value="">是我</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="tbStyle">列表样式</label>
-                <input type="text" class="form-control" id="tbStyle">
-            </div>
-            <div class="form-group">
-                <label for="inputFile">列表缩略图</label>
-                <input type="file" id="inputFile">
-            </div>
-            <div class="form-group">
-                <label for="article">正文</label>
-                <textarea class="form-control" rows="6" name=textarea id="article"></textarea>
-            </div>
-            <button type="submit" class="btn btn-success">发布</button>
-        </form>
     </div>
 </div>
+    
 <style>
-    .add{
-        display: none;
-    }
-    .mask{
-        position: absolute;
-        width: 200px;
-        top: 0;left: 0;
-        background: rgba(0,0,0,.4);
-    }
-    .adduser{
-        position: absolute;
-        right: 0;top: 0;
-        z-index: 1;
-        background: #fff;
-        color: #666;
-        font-size: 12px;
-    }
-    .add-title{
-        height: 40px;
-        line-height: 40px;
-        border-bottom: 1px solid #eee;
-    }
-    .back{
-        position: absolute;
-        z-index: 2;
-        margin-left: 10px;
-        cursor: pointer;
-    }
-    .back i{
-        font-size: 12px;
-    }
-    form{
-        padding: 20px 15px;
-    }
-    form button {
-        float: right;
-    }
+input[type=file]{
+    opacity: 0;
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    cursor: pointer;
+}
+.fileBtn{
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #3fbced;
+}
+.modal{
+    background: rgba(0, 0, 0, .4);
+    overflow: auto;
+}
+.modal-dialog {
+    margin-top: 0;
+    margin-right: 0;
+    font-size: 12px;
+}
+.modal-footer{
+    padding-bottom: 80px;
+}
+.backDiv{
+    position: absolute;
+    cursor: pointer;
+}
+.backDiv i{font-size: 12px;}
+.messageSpan{
+    color: red;
+}
+table span{
+    cursor: pointer;
+}
 </style>
+    
 <script>
     $(function(){
-        $('.mask').height($('.content').height());
-        $('.adduser').height($('.content').height());
-        $('.adduser').width($('.content').width()-200);
-        $('.news-wrap button:contains(新增)').bind('click',function(){
-            $('.add').fadeIn(200);
-        })
-        $('.back').bind('click',function(){
-            $('.add').fadeOut(200);
+        $('.modal-dialog').width($(window).width()-220);
+        // 新增
+        $('.addBtn').click(function(){
+            // 清除提示信息
+            $('button[type=reset]').trigger('click');
+            $('.messageSpan').html('');
+            $('#infoModal').show();
+        });
+        // 关闭模态框
+        $('.backDiv').click(function(){
+            $('#infoModal').hide();
         });
 
+    
+    // 保存
+    $('.saveBtn').click(function(){
+        var infoName = $('input[name=infoName]').val();
+        var infoParent = $('input[name=infoParent]').val();
+        var infoComment = $('input[name=infoComment]').val();
+        var obj = {
+
+        }
+    });
+    loadData();
+    //获取数据
+    function loadData(){
+        // 先删除节点，获取数据，追加节点
+        $('#info table tr:not(:first)').remove();
+        $.get(baseURL+'/index/findArticleByCategoryId',function(res){
+            res.data.forEach(function(item){
+                news = res.data;
+                var $news = $(
+                    `<tr>
+                        <td><input type="checkbox" value="`+item.id+`" /></td>
+                        <td>`+item.title+`</td>
+                        <td>`+(item.category?item.category.name:'-')+`</td>
+                        <td>`+(item.music?item.music:'-')+`</td>
+                        <td>`+(item.author?item.author:'-')+`</td>
+                        <td>`+(item.publishtime?item.publishtime:'-')+`</td>
+                        <td>`+(item.readtimes?item.readtimes:'-')+`</td>
+                        <td><span class="glyphicon glyphicon-pencil" title="修改"></span>
+                            <span class="glyphicon glyphicon-remove" title="删除"></span>
+                        </td>
+                    </tr>`
+                );
+                $('#info table').append($news);
+            });
+        });
+    };
     })
 </script>
