@@ -61,7 +61,6 @@ $content-color:#eee;
     border-radius: 5px;
     font-size: 12px;
     padding-bottom: 20px;
-    overflow-y: auto;
 }
 @mixin td_height{
     height:24px;
@@ -69,6 +68,7 @@ $content-color:#eee;
 }
 .content{
     background-color: $content-color;
+    overflow-y: auto;
     // 内容区顶部
     .content-top{
         line-height: $line-height;
@@ -111,7 +111,7 @@ $content-color:#eee;
     .content-center{
         background-color: $content-color;
         height: 720px;
-        margin:15px 10px 0 210px;
+        margin:15px 10px 0 10px;
     }
     // 首页内容
     #home{
@@ -257,16 +257,9 @@ $content-color:#eee;
 
         // 第七个动态图表区
         .data-five:last-child{
-            #IEcontent{
+            #nowFlash{
                 height:135px;
-                width: 100%;
                 background:$color;
-                #table-sparkline{
-                 margin: 0 auto;
-                 td:first-child{
-                     padding-bottom: 15px;
-                 }   
-                }
             }
         }
         }

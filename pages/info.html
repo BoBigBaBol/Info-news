@@ -1,12 +1,18 @@
 <div id="info">
-    <button class="btn btn-success addBtn">新增</button>
-    <button class="btn btn-success batchDelBtn">批量删除</button>
+    <div id="optionDiv">
+        <select name="categoryId">
+            <!-- 从后台获取栏目数据追加节点 -->
+
+        </select>
+        <button class="btn btn-success btn-sm addBtn">新增</button>
+        <button class="btn btn-success btn-sm batchDelBtn">批量删除</button>
+    </div>
     <table class="table table-bordered text-center">
         <tr>
             <td>编号</td>
             <td>文章标题</td>
             <td>所属栏目</td>
-            <td>背景音乐</td>
+            <td>列表样式</td>
             <td>作者</td>
             <td>发布时间</td>
             <td>阅读次数</td>
@@ -29,24 +35,32 @@
                 <form>
                     <div class="form-group">
                         <label for="">标题</label>
-                        <input type="text" class="form-control" name="infoName">
+                        <input type="text" class="form-control" name="infoTitle">
                     </div>
                     <div class="form-group">
                         <label for="">所属栏目</label>
-                        <select class="form-control" name="infoParent">
+                        <select class="form-control" name="infoCategory">
                             <option value="">请选择</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="">列表样式</label>
-                        <input type="text" class="form-control" name="infoStyle">
+                        <label style="display:block">列表样式</label>
+                        <label for="style-one">
+                            <input type="radio" name="infoList" id="style-one" value="style-one">
+                            <img src="./images/style-one.jpg" alt="">
+                        </label>
+                        
+                        <label for="style-two">
+                            <input type="radio" name="infoList" id="style-two" value="style-two">
+                            <img src="./images/style-two.jpg" alt="">
+                        </label>
                     </div>
                         <label for="">列表缩略图</label>
                         <input type="file"  name="infoPic">
                         <div class="fileBtn text-center">点击上传</div>
                     <div class="form-group">
                         <label for="">正文</label>
-                        <textarea name="infoComment" class="form-control" rows="3"></textarea>
+                        <textarea name="infoComment" class="form-control" rows="6"></textarea>
                     </div>
                     <div class="form-group hide">
                         <button type="reset">重置</button>
@@ -63,6 +77,20 @@
 </div>
     
 <style>
+#optionDiv{
+    overflow: hidden;
+}
+#optionDiv select {
+    width: 200px;
+    height: 30px;
+}
+#optionDiv *{
+    float: left;
+    margin: 10px 0 0 10px;
+}
+#info table{
+    margin-top: 10px;
+}
 input[type=file]{
     opacity: 0;
     position: absolute;
@@ -84,9 +112,16 @@ input[type=file]{
     background: rgba(0, 0, 0, .4);
     overflow: auto;
 }
+.modal img{
+    width: 300px;
+}
+.modal label[for=style-one]{
+    margin-right: 30px;
+}
 .modal-dialog {
     margin-top: 0;
     margin-right: 0;
+    margin-bottom: 0;
     font-size: 12px;
 }
 .modal-footer{
@@ -107,54 +142,216 @@ table span{
     
 <script>
     $(function(){
+        // 全局通过栏目ID查找所有文章得到的数组
+        var articles = [];
+        // 全局的当前正在修改的文章对象，修改和保存时使用
+        var article = {};
+        // 记录当前操作是新增还是修改
+        var option = '新增';
+        // 全局栏目id
+        var currentCId = '';
         $('.modal-dialog').width($(window).width()-220);
+
+        addCategoryId();
+        // 给name=categoryId绑定change事件，当他发生改变的时候，获取值，拿到categoryId，去查找文章
+        $('select[name=categoryId]').change(function(){
+            var id = $(this).val();
+            currentCId = id;
+            loadData(id);
+        });
+        
+        // 给name=categoryId的select添加option，栏目信息
+        function addCategoryId(){
+            $('select[name=categoryId]').empty();
+            $.get(baseURL+'/manager/category/findAllCategory',function(res){
+                res.data.forEach(function(item){
+                    var $option = $('<option value="'+item.id+'">'+item.name+'</option>');
+                    $('select[name=categoryId]').append($option);
+                });
+                // 通过categoryId来获取对应的文章信息
+                currentCId = $('select[name=categoryId]').val()
+                loadData($('select[name=categoryId]').val());
+            });
+        }
+        
+        // categoryId是栏目id，通过栏目id来查找文章信息，追加节点
+        function loadData(categoryId){
+            $('#info table tr:not(:first)').remove();
+            var obj = {
+                page:0,
+                pageSize:1000,
+                categoryId:categoryId,
+            };
+            $.get(baseURL+'/manager/article/findArticle',obj,function(res){
+                console.log(res);
+                if(res.status == 200){
+                    // 遍历数据，生成节点
+                    if(res.data&&res.data.list){
+                        articles = res.data.list;
+                        res.data.list.forEach(function(item){
+                            var $tr = $(
+                                `<tr>
+                                    <td><input type="checkbox" value="`+item.id+`"></td>
+                                    <td>`+item.title+`</td>
+                                    <td>`+item.category.name+`</td>
+                                    <td>`+item.liststyle+`</td>
+                                    <td>`+(item.author?item.author:'-')+`</td>
+                                    <td>`+(item.publishtime?item.publishtime:'-')+`</td>
+                                    <td>`+item.readtimes+`</td>
+                                    <td>
+                                        <span class="glyphicon glyphicon-pencil" title="修改"></span>
+                                        <span class="glyphicon glyphicon-remove" title="删除"></span>
+                                    </td>
+                                </tr>`);
+                            $('#info table').append($tr);
+                        });
+                    }
+                }else{
+                    console.log(res.message);
+                    alert('数据加载失败');
+                }
+            });
+        }
+
         // 新增
         $('.addBtn').click(function(){
-            // 清除提示信息
+            option = '新增';
+            // 清除提示信息，清空表单，查找栏目，追加节点，设置栏目值，显现模态框
             $('button[type=reset]').trigger('click');
             $('.messageSpan').html('');
-            $('#infoModal').show();
+            addOption(currentCId);
         });
+        // 封装 显示模态框，value设置栏目值
+        function addOption(value){
+            // 查找栏目，追加节点，设置栏目值，显现模态框
+            $('select[name=infoCategory]').empty();
+            $.get(baseURL+'/manager/category/findAllCategory',function(res){
+                res.data.forEach(function(item){
+                    var $option = $('<option value="'+item.id+'">'+item.name+'</option>');
+                    $('select[name=infoCategory]').append($option);
+                });
+                // 设置值
+                $('select[name=infoCategory]').val(value);
+                $('#infoModal').show();
+            });
+        }
+        
         // 关闭模态框
         $('.backDiv').click(function(){
             $('#infoModal').hide();
         });
 
-    
-    // 保存
-    $('.saveBtn').click(function(){
-        var infoName = $('input[name=infoName]').val();
-        var infoParent = $('input[name=infoParent]').val();
-        var infoComment = $('input[name=infoComment]').val();
-        var obj = {
+        // 保存
+        $('.saveBtn').click(function(){
+            // 获取用户的数据，表单验证，不通过的话，提示用户，如果通过，保存，关闭模态框，刷新数据
+            var infoTitle = $('input[name=infoTitle]').val();
+            var infoCategory = $('select[name=infoCategory]').val();
+            var infoList = $('input[name=infoList]:checked').val();
+            var infoComment = $('textarea[name=infoComment]').val();
+            if(infoTitle&&infoCategory&&infoList&&infoComment){
+                var obj = {
+                    title:infoTitle,
+                    liststyle:infoList,
+                    categoryId:infoCategory,
+                    content:infoComment
+                };
+                if(option =='修改'){
+                    obj.id = article.id;
+                    obj.publishtime = parseDate();
+                    obj.readtimes = article.readtimes;
+                }
+                $.post(baseURL+'/manager/article/saveOrUpdateArticle',obj,function(res){
+                    console.log(res);
+                    if(res.status==200){
+                        $('#infoModal').hide();
+                        loadData($('select[name=infoCategory]').val());
+                    }else{
+                        alert('保存失败');
+                        console.log(res.message);
+                    }
+                });
+            }else{
+                $('.messageSpan').html('请输入完整的信息');
+            }
 
-        }
-    });
-    loadData();
-    //获取数据
-    function loadData(){
-        // 先删除节点，获取数据，追加节点
-        $('#info table tr:not(:first)').remove();
-        $.get(baseURL+'/index/findArticleByCategoryId',function(res){
-            res.data.forEach(function(item){
-                news = res.data;
-                var $news = $(
-                    `<tr>
-                        <td><input type="checkbox" value="`+item.id+`" /></td>
-                        <td>`+item.title+`</td>
-                        <td>`+(item.category?item.category.name:'-')+`</td>
-                        <td>`+(item.music?item.music:'-')+`</td>
-                        <td>`+(item.author?item.author:'-')+`</td>
-                        <td>`+(item.publishtime?item.publishtime:'-')+`</td>
-                        <td>`+(item.readtimes?item.readtimes:'-')+`</td>
-                        <td><span class="glyphicon glyphicon-pencil" title="修改"></span>
-                            <span class="glyphicon glyphicon-remove" title="删除"></span>
-                        </td>
-                    </tr>`
-                );
-                $('#info table').append($news);
-            });
+        })
+
+        // 修改
+        $('#info table').on({
+            click:function(){
+                option='修改';
+                // 获取当前修改文章对象的id，获取对应的文章对象，设置模态框中的值，显示模态框
+                var currentAId = $(this).closest('tr').find('input[type=checkbox]').val();
+                article = articles.filter(function(item){
+                    return item.id == currentAId;
+                })[0];
+                // 设置标题
+                $('input[name=infoTitle]').val(article.title);
+                // 设置正文
+                $('textarea[name=infoComment]').val(article.content);
+                // 设置列表样式，先清空所有的选择，然后通过value来选择id，然后设置radio选中
+                $('input[name=infoList]').prop('checked',false);
+                // 文章的liststyle=style-one  再选中radio value=style-one
+                $('input[value='+article.liststyle+']').prop('checked',true);
+                // 所属栏目，文章所属栏目的id
+                addOption(article.category.id);
+
+            }
+        },'span[title=修改]')
+
+        // 删除
+        $('#info table').on({
+            click:function(){
+                // 获取id，传递给后台
+                var id = $(this).closest('tr').find('input[type=checkbox]').val();
+                var obj = {
+                    id:id
+                };
+                $.get(baseURL+'/manager/article/deleteArticleById',obj,function(res){
+                    if(res.status == 200){
+                        alert('删除成功');
+                        loadData(currentCId);
+                    }else{
+                        alert('删除失败');
+                        console.log(res.message);
+                    }
+                });
+            }
+        },'span[title=删除]')
+    
+        // 批量删除
+        $('.batchDelBtn').click(function(){
+            // 获取用户选择的checkbox，获取对应的id数组，转换成字符串传给后台
+            var ids = $('#info input[type=checkbox]:checked').map(function(index,item){
+                return $(item).val();
+            }).get();
+            var obj = {
+                ids:ids.toString()
+            };
+            $.post(baseURL+'/manager/article/batchDeleteArticle',obj,function(res){
+                if(res.status == 200){
+                    alert('批量删除成功');
+                    loadData();
+                }else{
+                    alert('批量删除失败');
+                    console.log(res.message);
+                }
+            })
         });
-    };
+
+        // 封装时间
+        function parseDate(){
+            var date = new Date();
+            var year = date.getFullYear();
+            var month = date.getMonth()+1;
+            var day = date.getDate();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            return year+'-'+addZero(month)+'-'+addZero(day)+'-'+addZero(hours)+':'+addZero(minutes)+':'+addZero(seconds);
+        }
+        function addZero(num){
+            return num<10?'0'+num:num;
+        }
     })
 </script>
